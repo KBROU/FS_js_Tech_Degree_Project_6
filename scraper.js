@@ -17,8 +17,27 @@ let dataUrl = '';
 let dataUrlArrayLength = '';
 let shirtDataArray = [];
 
+//Error Functions
+function statusError (errorCode) {
+  let statusError = `There was an error with Status Code: ${errorCode} sorry for the inconvenience.`
+  console.log(statusError);
+  errorLog (statusError);
+}
+
+function catchError (error){
+    if(error.code === 'ENOTFOUND') {
+      let errorMessage = `Node.js Error Code: ${error.code}. Hostname ${error.hostname} was not found. Please make sure this address information is correct or check internet connection.`
+      console.error(errorMessage);
+      errorLog (errorMessage);
+
+    } else {
+      console.error(`Node.js Error Code: ${error.code} sorry for the inconvenience.`)
+      errorLog (`Node.js Error Code: ${error.code} sorry for the inconvenience.`);
+    }
+}
 
 //Setting up NPM scrape-it promise interface, which is the Command Line Application for the content scraper. The first scraper.js promise collects the url data for all the shirt sites.
+//http://shirts4mike.com/shirts.php
 scrapeIt("http://shirts4mike.com/shirts.php", {
   pages: {
         listItem: ".products > li"
@@ -40,14 +59,10 @@ scrapeIt("http://shirts4mike.com/shirts.php", {
       shirtData(url.url, index);
       })
     } else {
-      console.log(`There was an error with Status Code: ${response.statusCode} sorry for the inconvenience.`);
+      statusError(response.statusCode)
     }
-}).catch(function onError (error){
-    if(error.code === 'ENOTFOUND') {
-      console.error(`Node.js Error Code: ${error.code}. Hostname ${error.hostname} was not found. Please make sure this address information is correct or check internet connection.`);
-    } else {
-      console.error(`Node.js Error Code: ${error.code} sorry for the inconvenience.`)
-    }
+}).catch(function (error){
+    catchError(error);
 });
 
 
@@ -82,19 +97,18 @@ function shirtData(url, index) {
 
   }).then(({ data, response }) => {
         if (response.statusCode == 200) {
-          let popData = data.shirtDetails.pop();
-          let popImg = data.imageDetails.pop().image;
-          popData.url = url;
-          popData.image = popImg;
-          console.log(popData);
-          if((shirtDataArray.length) < (dataUrlArrayLength - 1)){
-            shirtDataArray.push(popData);
-          } else {
-            shirtDataArray.push(popData);
-            csvConvert(shirtDataArray);
-          }
+            let popData = data.shirtDetails.pop();
+            let popImg = data.imageDetails.pop().image;
+            popData.url = url;
+            popData.image = url.split('com')[0] + 'com/' + popImg;
+            if((shirtDataArray.length) < (dataUrlArrayLength - 1)){
+              shirtDataArray.push(popData);
+            } else {
+              shirtDataArray.push(popData);
+              csvConvert(shirtDataArray);
+            }
         } else {
-          console.log(`There was an error with Status Code: ${response.statusCode} sorry for the inconvenience.`);
+          statusError(response.statusCode)
         }
   })
 }
@@ -126,6 +140,13 @@ function writeData (data) {
   });
 }
 
+//Create error log file
+function errorLog (errorData) {
+  let dateError = new Date() + ' Error Message: ' + errorData + '\r\n';
+  fs.appendFile('scraper-error.log', dateError, (err) => {
+  if (err) throw err;
+});
+}
 
 //Creating the CSV file using NPM package CSV
 function csvConvert(data1) {
