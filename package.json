@@ -1,0 +1,29 @@
+
+{
+  "name": "scraper_project_6",
+  "version": "0.0.1",
+  "description": "Content Scraper for an ecommerce site",
+  "main": "scraper.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node scraper.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KBROU/FS_js_Tech_Degree_Project_6.git"
+  },
+  "keywords": [
+    "content",
+    "scraper"
+  ],
+  "author": "Kody Broussard",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/KBROU/FS_js_Tech_Degree_Project_6/issues"
+  },
+  "homepage": "https://github.com/KBROU/FS_js_Tech_Degree_Project_6#readme",
+  "dependencies": {
+    "csv": "^4.0.0",
+    "scrape-it": "^5.0.5"
+  }
+}
