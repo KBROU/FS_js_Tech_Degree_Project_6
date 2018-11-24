@@ -3,3 +3,7 @@
 Content scraper that pulls data from a website and compiles into CSV format.
 
 Application must be run with Node.js
+
+---
+permalink: /README.md
+---
